@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service-service
+spec:
+  selector:
+    app: notification-service-green  # Initially set to green
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 50002
+  type: ClusterIP

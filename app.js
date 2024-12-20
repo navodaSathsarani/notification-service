@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const schedule = require('node-schedule');
 
 const app = express();
-const PORT = process.env.PORT || 50002;
+
 
 // Middleware
 app.use(bodyParser.json());
@@ -93,7 +93,5 @@ app.delete('/notifications/:id', async (req, res) => {
     }
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Notification Service is running on port ${PORT}`);
-});
+
+module.exports = app;
