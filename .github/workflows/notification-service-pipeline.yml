@@ -63,6 +63,7 @@ jobs:
     # Step 9: Deploy Green Deployment
     - name: Deploy Green Deployment
       run: |
+        kubectl apply -f notification-service.yaml
         sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:${{ github.sha }}|g" notification-service-green.yaml
         kubectl apply -f notification-service-green.yaml
         sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:${{ github.sha }}|g" notification-service-blue.yaml
