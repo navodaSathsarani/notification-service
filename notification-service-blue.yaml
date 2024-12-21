@@ -16,7 +16,7 @@ spec:
       - name: notification-service
         image: gcr.io/healthsync-project-445302/notification-service
         ports:
-        - containerPort: 50002
+        - containerPort: 5002
         env:
         - name: MONGO_URI
           value: "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db"

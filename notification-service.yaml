@@ -8,5 +8,5 @@ spec:
   ports:
   - protocol: TCP
     port: 83
-    targetPort: 50002
+    targetPort: 5002
   type: ClusterIP
