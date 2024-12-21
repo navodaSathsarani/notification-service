@@ -7,6 +7,6 @@ spec:
     app: notification-service-green  # Initially set to green
   ports:
   - protocol: TCP
-    port: 5002
+    port: 83
     targetPort: 50002
   type: ClusterIP
