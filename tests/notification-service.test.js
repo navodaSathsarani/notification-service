@@ -3,15 +3,11 @@ const mongoose = require('mongoose');
 const app = require('../server'); // Import the server file to ensure routes are loaded
 
 describe('Notification Service Integration Tests', () => {
-  beforeAll(async () => {
-    console.log('Connecting to MongoDB...');
-    await mongoose.connect(
-      "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db"
-, // Use environment variable for MongoDB URI
-      {}
-    );
-    console.log('Connected to MongoDB');
-  });
+beforeAll(async () => {
+    // Connect to a test MongoDB database
+    const TEST_DB_URI = "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db";
+    await mongoose.connect(TEST_DB_URI, { });
+});
 
   afterAll(async () => {
     console.log('Closing MongoDB connection...');
