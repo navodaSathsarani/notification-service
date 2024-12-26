@@ -5,7 +5,7 @@ const appRoutes = require('./app'); // Import app.js routes
 const app = express();
 app.use(bodyParser.json());
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5002;
 const BASE_PATH = process.env.BASE_PATH || '/api/v1/notification-service';
 const MONGO_URI = process.env.MONGO_URI;
 app.use(BASE_PATH, appRoutes);

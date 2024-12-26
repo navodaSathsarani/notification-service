@@ -13,7 +13,7 @@ const EMAIL_PASS = process.env.EMAIL_PASS || 'your-email-password';
 const MONGO_URI = process.env.MONGO_URI;
 
 // MongoDB Connection
-mongoose.connect(MONGO_URI, {
+mongoose.connect('mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db', {
 }).then(() => console.log('Connected to MongoDB')).catch(err => console.error('MongoDB connection error:', err));
 
 // Notification Schema and Model
