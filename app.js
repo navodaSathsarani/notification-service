@@ -1,5 +1,6 @@
 
 const express = require('express');
+const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 mongoose.connect('mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db', {
