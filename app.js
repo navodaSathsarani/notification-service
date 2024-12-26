@@ -1,20 +1,15 @@
+
 const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
-const nodemailer = require('nodemailer');
-const schedule = require('node-schedule');
-const healthCheck = require('express-healthcheck');
-
-// Environment Variables
-require('dotenv').config();
-
-const EMAIL_USER = process.env.EMAIL_USER || 'your-email@gmail.com';
-const EMAIL_PASS = process.env.EMAIL_PASS || 'your-email-password';
-const MONGO_URI = process.env.MONGO_URI;
-
-// MongoDB Connection
+const bodyParser = require('body-parser');
 mongoose.connect('mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db', {
-}).then(() => console.log('Connected to MongoDB')).catch(err => console.error('MongoDB connection error:', err));
+}).then(() => console.log('Connected to MongoDB server')).catch(err => console.error('MongoDB connection error:', err));
+const router = express.Router();
+router.use(bodyParser.json());
+
+const EMAIL_USER = process.env.EMAIL_USER || 'navodasathsarani@gmail.com';
+const EMAIL_PASS = process.env.EMAIL_PASS || 'Navoda1993,.';
+
 
 // Notification Schema and Model
 const notificationSchema = new mongoose.Schema({
@@ -36,14 +31,21 @@ const transporter = nodemailer.createTransport({
 
 // Health Check Middleware
 let healthy = true;
+
+// Set unhealthy status
 router.use('/unhealthy', (req, res) => {
     healthy = false;
     res.status(200).json({ healthy });
 });
+
+// Liveness Check
 router.use('/healthcheck', (req, res, next) => {
-    if (healthy) next();
-    else next(new Error('unhealthy'));
-}, healthCheck());
+    if (healthy) {
+        next();
+    } else {
+        next(new Error('unhealthy'));
+    }
+});
 
 // Readiness Check
 router.use('/readiness', (req, res) => {

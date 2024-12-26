@@ -1,63 +1,88 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../server'); // Import the server file to ensure routes are loaded
+const express = require('express');
+const notificationRoutes = require('../app'); // Adjust the path as necessary
 
-describe('Notification Service Integration Tests', () => {
+const app = express();
+app.use(express.json());
+app.use('/api/v1/notification-service', notificationRoutes);
+
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn(() => ({
+    sendMail: jest.fn((mailOptions, callback) => callback(null, { response: 'success' })),
+  })),
+}));
+
 beforeAll(async () => {
-    // Connect to a test MongoDB database
-    const TEST_DB_URI = "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db";
-    await mongoose.connect(TEST_DB_URI, { });
+  const TEST_DB_URI = "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db";
+  await mongoose.connect(TEST_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
-  afterAll(async () => {
-    console.log('Closing MongoDB connection...');
-    await mongoose.connection.close();
-    console.log('MongoDB connection closed');
+afterAll(async () => {
+  await mongoose.connection.dropDatabase();
+  await mongoose.connection.close();
+});
+
+describe('Notification Service Tests', () => {
+  it('should schedule a notification successfully', async () => {
+    const res = await request(app)
+      .post('/api/v1/notification-service/notifications')
+      .send({
+        patientEmail: 'test@example.com',
+        message: 'This is a test notification.',
+        scheduledTime: new Date(Date.now() + 60000).toISOString(), // Schedule 1 minute later
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty('message', 'Notification scheduled successfully');
+    expect(res.body.notification).toHaveProperty('status', 'Pending');
   });
-
-  jest.setTimeout(10000); // Increase timeout to 10 seconds
-
-  // it('should schedule a new notification', async () => {
-  //   const response = await request(app)
-  //     .post('/api/v1/notification-service/notifications') // Adjust the base path to match your server
-  //     .send({
-  //       patientEmail: 'test@example.com',
-  //       message: 'This is a test notification.',
-  //       scheduledTime: new Date(new Date().getTime() + 60000).toISOString() // 1 minute from now
-  //     });
-
-  //   expect(response.statusCode).toBe(201);
-  //   expect(response.body.notification.patientEmail).toBe('test@example.com');
-  //   expect(response.body.notification.message).toBe('This is a test notification.');
-  //   expect(response.body.notification.status).toBe('Pending'); // Verify default status
-  // });
 
   it('should retrieve all notifications', async () => {
-    const response = await request(app).get('/api/v1/notification-service/notifications'); // Adjust the base path
-    expect(response.statusCode).toBe(200);
-    expect(Array.isArray(response.body)).toBe(true);
+    const res = await request(app)
+      .get('/api/v1/notification-service/notifications');
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
   });
 
-  // it('should delete a specific notification by ID', async () => {
-  //   // Create a notification to test deletion
-  //   const createResponse = await request(app)
-  //     .post('/api/v1/notification-service/notifications')
-  //     .send({
-  //       patientEmail: 'delete_test@example.com',
-  //       message: 'This notification will be deleted.',
-  //       scheduledTime: new Date(new Date().getTime() + 60000).toISOString()
-  //     });
-  //   const notificationId = createResponse.body.notification._id;
+  it('should delete a notification successfully', async () => {
+    // Create a notification to delete
+    const notification = await request(app)
+      .post('/api/v1/notification-service/notifications')
+      .send({
+        patientEmail: 'delete@example.com',
+        message: 'Delete this notification.',
+        scheduledTime: new Date(Date.now() + 60000).toISOString(),
+      });
 
-  //   const deleteResponse = await request(app).delete(`/api/v1/notification-service/notifications/${notificationId}`);
-  //   expect(deleteResponse.statusCode).toBe(200);
-  //   expect(deleteResponse.body.message).toBe('Notification deleted successfully.');
-  // });
+    const notificationId = notification.body.notification._id;
 
-  it('should handle non-existent notification deletion gracefully', async () => {
-    const nonExistentId = new mongoose.Types.ObjectId(); // Generate a valid but non-existent ObjectId
-    const response = await request(app).delete(`/api/v1/notification-service/notifications/${nonExistentId}`);
-    expect(response.statusCode).toBe(404);
-    expect(response.body.message).toBe('Notification not found');
+    const res = await request(app)
+      .delete(`/api/v1/notification-service/notifications/${notificationId}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Notification deleted successfully');
+  });
+
+  it('should return 404 for deleting a non-existing notification', async () => {
+    const res = await request(app)
+      .delete('/api/v1/notification-service/notifications/64ce8dcddf36c23124e4c2f1'); // Random ID
+
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty('message', 'Notification not found');
+  });
+
+  it('should handle invalid notification creation data', async () => {
+    const res = await request(app)
+      .post('/api/v1/notification-service/notifications')
+      .send({
+        patientEmail: '', // Invalid email
+        message: '', // Empty message
+        scheduledTime: '', // Missing scheduled time
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty('error');
   });
 });
