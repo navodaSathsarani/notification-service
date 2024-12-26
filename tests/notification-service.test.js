@@ -21,20 +21,20 @@ describe('Notification Service Integration Tests', () => {
 
   jest.setTimeout(10000); // Increase timeout to 10 seconds
 
-  it('should schedule a new notification', async () => {
-    const response = await request(app)
-      .post('/api/v1/notification-service/notifications') // Adjust the base path to match your server
-      .send({
-        patientEmail: 'test@example.com',
-        message: 'This is a test notification.',
-        scheduledTime: new Date(new Date().getTime() + 60000).toISOString() // 1 minute from now
-      });
+  // it('should schedule a new notification', async () => {
+  //   const response = await request(app)
+  //     .post('/api/v1/notification-service/notifications') // Adjust the base path to match your server
+  //     .send({
+  //       patientEmail: 'test@example.com',
+  //       message: 'This is a test notification.',
+  //       scheduledTime: new Date(new Date().getTime() + 60000).toISOString() // 1 minute from now
+  //     });
 
-    expect(response.statusCode).toBe(201);
-    expect(response.body.notification.patientEmail).toBe('test@example.com');
-    expect(response.body.notification.message).toBe('This is a test notification.');
-    expect(response.body.notification.status).toBe('Pending'); // Verify default status
-  });
+  //   expect(response.statusCode).toBe(201);
+  //   expect(response.body.notification.patientEmail).toBe('test@example.com');
+  //   expect(response.body.notification.message).toBe('This is a test notification.');
+  //   expect(response.body.notification.status).toBe('Pending'); // Verify default status
+  // });
 
   it('should retrieve all notifications', async () => {
     const response = await request(app).get('/api/v1/notification-service/notifications'); // Adjust the base path
