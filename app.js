@@ -30,7 +30,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Health Check Middleware
 let healthy = true;
 
 // Set unhealthy status
@@ -42,9 +41,9 @@ router.use('/unhealthy', (req, res) => {
 // Liveness Check
 router.use('/healthcheck', (req, res, next) => {
     if (healthy) {
-        next();
+        res.status(200).json({ status: 'healthy' });
     } else {
-        next(new Error('unhealthy'));
+        next(new Error('Service is unhealthy'));
     }
 });
 
