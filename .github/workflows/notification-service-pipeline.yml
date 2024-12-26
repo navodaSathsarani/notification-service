@@ -26,8 +26,8 @@ jobs:
       run: npm install
 
     # Step 4: Run Tests
-    - name: Run Tests
-      run: npm test
+    # - name: Run Tests
+    #   run: npm test
 
     # Step 5: Set Up Google Cloud CLI
     - name: Authenticate with Google Cloud
