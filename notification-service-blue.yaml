@@ -14,9 +14,21 @@ spec:
     spec:
       containers:
       - name: notification-service
-        image: gcr.io/healthsync-project-445302/notification-service
+        image: gcr.io/healthsync-project-445302/notification-service:latest
         ports:
         - containerPort: 5002
+        readinessProbe:
+            httpGet:
+              port: 3001
+              path: /api/v1/notification-service/readiness
+            initialDelaySeconds: 40
+            periodSeconds: 10
+        livenessProbe:
+            httpGet:
+              port: 3001
+              path: /api/v1/notification-service/healthcheck
+            initialDelaySeconds: 40
+            periodSeconds: 10  
         env:
         - name: MONGO_URI
           value: "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db"

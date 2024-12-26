@@ -48,8 +48,8 @@ jobs:
     # Step 8: Build and Push Docker Image
     - name: Build and Push Docker Image
       run: |
-        docker buildx build --platform linux/amd64 -t gcr.io/healthsync-project-445302/notification-service:${{ github.sha }} .
-        docker push gcr.io/healthsync-project-445302/notification-service:${{ github.sha }}
+        docker buildx build --platform linux/amd64 -t gcr.io/healthsync-project-445302/notification-service:latest .
+        docker push gcr.io/healthsync-project-445302/notification-service:latest
 
     - name: Install Gcloud components
       run: |
@@ -64,9 +64,9 @@ jobs:
     - name: Deploy Green Deployment
       run: |
         kubectl apply -f notification-service.yaml
-        sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:${{ github.sha }}|g" notification-service-green.yaml
+        sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:latest|g" notification-service-green.yaml
         kubectl apply -f notification-service-green.yaml
-        sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:${{ github.sha }}|g" notification-service-blue.yaml
+        sed -i "s|<IMAGE>|gcr.io/healthsync-project-445302/notification-service:latest|g" notification-service-blue.yaml
         kubectl apply -f notification-service-blue.yaml
 
     # Step 10: Validate Green Deployment
