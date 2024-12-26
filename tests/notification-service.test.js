@@ -6,7 +6,8 @@ describe('Notification Service Integration Tests', () => {
   beforeAll(async () => {
     console.log('Connecting to MongoDB...');
     await mongoose.connect(
-      process.env.MONGO_URI, // Use environment variable for MongoDB URI
+      "mongodb+srv://navodasathsarani:chQf3ctN1Xwx7H6s@health-sync-mongo-db.okigg.mongodb.net/health-db?retryWrites=true&w=majority&appName=health-sync-mongo-db"
+, // Use environment variable for MongoDB URI
       {}
     );
     console.log('Connected to MongoDB');
