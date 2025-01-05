@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 const EMAIL_USER = process.env.EMAIL_USER || 'navodasathsarani@gmail.com';
-const EMAIL_PASS = process.env.EMAIL_PASS || 'Navoda1993,.';
+const EMAIL_PASS = process.env.EMAIL_PASS || 'bjab kzbi gmyg oiek';
 
 
 // Notification Schema and Model
@@ -59,9 +59,7 @@ router.post('/notifications', async (req, res) => {
         const { patientEmail, message, scheduledTime } = req.body;
         const notification = new Notification({ patientEmail, message, scheduledTime });
         await notification.save();
-
-        // Schedule the notification
-        schedule.scheduleJob(new Date(scheduledTime), async () => {
+        
             try {
                 await transporter.sendMail({
                     from: EMAIL_USER,
@@ -76,7 +74,6 @@ router.post('/notifications', async (req, res) => {
             } catch (error) {
                 console.error(`Failed to send notification to ${patientEmail}:`, error);
             }
-        });
 
         res.status(201).json({ message: 'Notification scheduled successfully', notification });
     } catch (error) {
